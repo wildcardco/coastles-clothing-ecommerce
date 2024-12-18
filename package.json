@@ -1,0 +1,19 @@
+{
+  "name": "coastles-ecommerce",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "nuxt": "^3.13.0",
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "nuxt-graphql-client": "^0.2.33",
+    "@headlessui/vue": "^1.7.19",
+    "@heroicons/vue": "^2.1.1"
+  }
+}
