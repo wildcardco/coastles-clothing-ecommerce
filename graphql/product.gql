@@ -1,0 +1,19 @@
+query GetProduct($handle: String!) {
+  product(handle: $handle) {
+    id
+    title
+    handle
+    description
+    images(first: 1) {
+      nodes {
+        url
+      }
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+  }
+}

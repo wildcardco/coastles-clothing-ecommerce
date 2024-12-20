@@ -5,6 +5,11 @@ query GetProducts {
       title
       handle
       description
+      variants(first: 1) {
+        nodes {
+          id
+        }
+      }
       images(first: 1) {
         nodes {
           url

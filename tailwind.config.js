@@ -9,18 +9,22 @@ module.exports = {
     extend: {
       colors: {
         'coastles': {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
+          50: '#f7f7f7',   // Lightest gray
+          100: '#e6e6e6',  // Very light gray
+          200: '#d4d4d4',  // Light gray
+          300: '#b0b0b0',  // Medium light gray
+          400: '#888888',  // Medium gray
+          500: '#666666',  // Gray
+          600: '#444444',  // Medium dark gray
+          700: '#333333',  // Dark gray
+          800: '#222222',  // Very dark gray
+          900: '#111111',  // Almost black
+          950: '#000000',  // Pure black
         }
-      }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'], // Modern, sleek font
+      },
     }
   },
   plugins: []

@@ -1,0 +1,75 @@
+mutation CartCreate {
+  cartCreate {
+    cart {
+      id
+      lines(first: 10) {
+        nodes {
+          id
+          quantity
+          merchandise {
+            ... on ProductVariant {
+              id
+              title
+              image {
+                url
+              }
+              product {
+                title
+              }
+            }
+          }
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+      cost {
+        subtotalAmount {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
+}
+
+mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+  cartLinesAdd(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+      lines(first: 10) {
+        nodes {
+          id
+          quantity
+          merchandise {
+            ... on ProductVariant {
+              id
+              title
+              image {
+                url
+              }
+              product {
+                title
+              }
+            }
+          }
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+      cost {
+        subtotalAmount {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
+}
