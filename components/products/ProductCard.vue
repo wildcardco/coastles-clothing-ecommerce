@@ -8,8 +8,8 @@
           class="h-full w-full object-cover object-center"
         >
       </div>
-      <h3 class="mt-4 text-sm text-gray-700">{{ product.title }}</h3>
-      <p class="mt-1 text-lg font-medium text-gray-900">
+      <h3 class="mt-4 text-sm font-bold text-gray-700">{{ product.title }}</h3>
+      <p class="mt-1 text-lg font-medium text-red-600">
         {{ formattedPrice }}
       </p>
     </NuxtLink>
