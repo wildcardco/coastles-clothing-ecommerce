@@ -18,7 +18,7 @@
     <div class="relative z-10 h-full flex items-center justify-center text-center">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-5xl font-bold tracking-tight text-coastles-50 sm:text-6xl md:text-7xl">
-          <span class="block text-coastles-300 font-light tracking-widest text-3xl sm:text-4xl md:text-5xl mt-2">Coast Less, Create More</span>
+          <span class="block text-coastles-300 font-light tracking-widest text-3xl sm:text-4xl md:text-5xl mt-2">COAST LESS, CREATE MORE</span>
         </h1>
         <p class="mt-6 max-w-md mx-auto text-coastles-200 text-lg sm:text-xl md:mt-8 md:text-2xl md:max-w-3xl">
           Discover our collection of premium streetwear designed for those who dare to stand out.
