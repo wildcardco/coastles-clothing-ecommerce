@@ -1,7 +1,0 @@
-{
-  "framework": "nuxt",
-  "buildCommand": "NITRO_PRESET=vercel-edge nuxt build",
-  "devCommand": "nuxt dev",
-  "ignoreCommand": "echo 'Running tests...'",
-  "installCommand": "npm install"
-}
