@@ -3,9 +3,15 @@ export const useProducts = () => {
     try {
       const { data, pending, error } = await useAsyncGql({
         operation: 'GetProducts',
-        variables: { first: 6 }
+        variables: { 
+          first: 6,
+          variantsFirst: 10
+        }
       })
-      console.log('Latest Products Response:', data)
+      console.log('Latest Products Response:', {
+        data,
+        variants: data?.products?.edges?.[0]?.node?.variants?.edges
+      })
       return { data, pending, error }
     } catch (error) {
       console.error('Error fetching latest products:', error)
@@ -17,9 +23,16 @@ export const useProducts = () => {
     try {
       const { data, pending, error } = await useAsyncGql({
         operation: 'GetProducts',
-        variables: { first: 50 }
+        variables: { 
+          first: 50,
+          variantsFirst: 10
+        }
       })
-      console.log('All Products Response:', data)
+      console.log('All Products Response:', {
+        data,
+        productCount: data?.products?.edges?.length,
+        firstProductVariants: data?.products?.edges?.[0]?.node?.variants?.edges
+      })
       return { data, pending, error }
     } catch (error) {
       console.error('Error fetching all products:', error)
@@ -31,9 +44,11 @@ export const useProducts = () => {
     try {
       const { data, pending, error } = await useAsyncGql({
         operation: 'GetProduct',
-        variables: { handle }
+        variables: { handle: handle.replace(/-/g, ' ') }
       })
-      console.log('Single Product Response:', data)
+      
+      console.log('Raw API Response:', data.value)
+      
       return { data, pending, error }
     } catch (error) {
       console.error('Error fetching product:', error)
@@ -41,9 +56,32 @@ export const useProducts = () => {
     }
   }
 
+  const getVariantOptions = (product: any) => {
+    if (!product?.variants?.edges?.length) return []
+    
+    const firstVariant = product.variants.edges[0].node
+    const optionTypes = firstVariant.selectedOptions.map((opt: any) => opt.name)
+    
+    return optionTypes.map((optionType: string) => {
+      const values = new Set(
+        product.variants.edges
+          .map((edge: any) => 
+            edge.node.selectedOptions.find((opt: any) => opt.name === optionType)?.value
+          )
+          .filter(Boolean)
+      )
+      
+      return {
+        name: optionType,
+        values: Array.from(values)
+      }
+    })
+  }
+
   return {
     getLatestProducts,
     getAllProducts,
-    getProduct
+    getProduct,
+    getVariantOptions
   }
 }

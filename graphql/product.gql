@@ -1,18 +1,44 @@
 query GetProduct($handle: String!) {
-  product(handle: $handle) {
-    id
-    title
-    handle
-    description
-    images(first: 1) {
-      nodes {
-        url
-      }
-    }
-    priceRange {
-      minVariantPrice {
-        amount
-        currencyCode
+  products(first: 1, query: $handle) {
+    edges {
+      node {
+        id
+        title
+        descriptionHtml
+        handle
+        media(first: 10, sortKey: POSITION) {
+          nodes {
+            ... on MediaImage {
+              id
+              mediaContentType
+              image {
+                id
+                url
+                altText
+                width
+                height
+              }
+            }
+          }
+        }
+        variants(first: 10) {
+          edges {
+            node {
+              id
+              title
+              availableForSale
+              selectedOptions {
+                name
+                value
+              }
+              price {
+                amount
+                currencyCode
+              }
+              sku
+            }
+          }
+        }
       }
     }
   }

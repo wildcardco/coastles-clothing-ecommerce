@@ -1,98 +1,58 @@
 <template>
-  <Transition
-    enter-active-class="transform transition ease-in-out duration-300"
-    enter-from-class="translate-x-full"
-    enter-to-class="translate-x-0"
-    leave-active-class="transform transition ease-in-out duration-300"
-    leave-from-class="translate-x-0"
-    leave-to-class="translate-x-full"
-  >
+  <Transition name="fade">
     <div 
-      v-if="cart.isCartOpen" 
-      class="fixed inset-0 overflow-hidden z-50"
+      v-if="isCartOpen" 
+      class="fixed inset-0 bg-black bg-opacity-50 z-40"
+      @click="handleClose"
+    />
+  </Transition>
+
+  <Transition name="slide">
+    <div 
+      v-if="isCartOpen"
+      class="fixed inset-y-0 right-0 max-w-md w-full bg-white shadow-xl z-50"
     >
-      <!-- Backdrop -->
-      <div 
-        class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-        @click="cart.toggleCart"
-      />
+      <div class="flex flex-col h-full">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4 border-b">
+          <h2 class="text-lg font-medium">Shopping Cart</h2>
+          <button
+            @click="handleClose"
+            class="p-2 -m-2 text-gray-400 hover:text-gray-500"
+          >
+            <XMarkIcon class="w-6 h-6" />
+          </button>
+        </div>
 
-      <!-- Flyout panel -->
-      <div class="fixed inset-y-0 right-0 max-w-full flex">
-        <div class="w-screen max-w-md">
-          <div class="h-full flex flex-col bg-white shadow-xl">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-6 sm:px-6 border-b border-gray-200">
-              <h2 class="text-lg font-medium text-gray-900">Cart</h2>
-              <button 
-                @click="cart.toggleCart"
-                class="text-gray-400 hover:text-gray-500"
-              >
-                <XMarkIcon class="h-6 w-6" />
-              </button>
-            </div>
+        <!-- Cart Content -->
+        <div class="flex-1 overflow-y-auto p-4">
+          <div v-if="!cart?.lines?.nodes?.length" class="text-center py-8">
+            <ShoppingBagIcon class="mx-auto h-12 w-12 text-gray-400" />
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Cart is empty</h3>
+            <p class="mt-1 text-sm text-gray-500">Start shopping to add items to your cart.</p>
+          </div>
 
-            <!-- Cart items -->
-            <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-              <div v-if="!cart.cartItems.length" class="text-center">
-                <div class="flex flex-col items-center">
-                  <ShoppingCartIcon class="h-12 w-12 text-gray-400" />
-                  <h3 class="mt-2 text-sm font-medium text-gray-900">Your cart is empty</h3>
-                  <p class="mt-1 text-sm text-gray-500">Browse our products to get started.</p>
-                  <NuxtLink
-                    to="/products"
-                    class="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-coastles-600 hover:bg-coastles-700"
-                    @click="cart.toggleCart"
-                  >
-                    Browse Products
-                  </NuxtLink>
-                </div>
-              </div>
+          <ul v-else class="divide-y divide-gray-200">
+            <li v-for="item in cart.lines.nodes" :key="item.id" class="py-6">
+              <!-- Cart items will go here -->
+            </li>
+          </ul>
+        </div>
 
-              <div v-else>
-                <ul class="-my-6 divide-y divide-gray-200">
-                  <li v-for="item in cart.cartItems" :key="item.id" class="py-6 flex">
-                    <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                      <img 
-                        :src="item.merchandise.image.url" 
-                        :alt="item.merchandise.product.title"
-                        class="h-full w-full object-cover object-center"
-                      />
-                    </div>
-                    <div class="ml-4 flex flex-1 flex-col">
-                      <div>
-                        <div class="flex justify-between text-base font-medium text-gray-900">
-                          <h3>{{ item.merchandise.product.title }}</h3>
-                          <p class="ml-4">
-                            {{ useFormatPrice(item.cost.totalAmount.amount, item.cost.totalAmount.currencyCode) }}
-                          </p>
-                        </div>
-                      </div>
-                      <div class="flex-1 flex items-end justify-between text-sm">
-                        <p class="text-gray-500">Qty {{ item.quantity }}</p>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-              <div class="flex justify-between text-base font-medium text-gray-900">
-                <p>Subtotal</p>
-                <p>{{ cart.cartTotal }}</p>
-              </div>
-              <div class="mt-6">
-                <NuxtLink
-                  to="/checkout"
-                  class="flex items-center justify-center rounded-md border border-transparent bg-coastles-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-coastles-700"
-                  @click="cart.toggleCart"
-                >
-                  Checkout
-                </NuxtLink>
-              </div>
-            </div>
+        <!-- Footer -->
+        <div class="border-t border-gray-200 p-4">
+          <div class="flex justify-between text-base font-medium text-gray-900">
+            <p>Subtotal</p>
+            <p>{{ cart?.cost?.subtotalAmount?.amount }}</p>
+          </div>
+          <p class="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
+          <div class="mt-6">
+            <a
+              :href="cart?.checkoutUrl"
+              class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800"
+            >
+              Checkout
+            </a>
           </div>
         </div>
       </div>
@@ -101,6 +61,34 @@
 </template>
 
 <script setup>
-import { XMarkIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
-const cart = useCart()
+import { XMarkIcon, ShoppingBagIcon } from '@heroicons/vue/24/outline'
+import { useShopifyCart } from '#imports'
+
+const { cart, isCartOpen, toggleCart } = useShopifyCart()
+
+const handleClose = () => {
+  toggleCart(false)
+}
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+}
+</style>

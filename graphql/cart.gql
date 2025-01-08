@@ -2,6 +2,62 @@ mutation CartCreate {
   cartCreate {
     cart {
       id
+      totalQuantity
+      lines(first: 10) {
+        nodes {
+          id
+          quantity
+          merchandise {
+            ... on ProductVariant {
+              id
+              title
+              product {
+                title
+              }
+            }
+          }
+        }
+      }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+
+mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+  cartLinesAdd(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+      totalQuantity
+      lines(first: 10) {
+        nodes {
+          id
+          quantity
+          merchandise {
+            ... on ProductVariant {
+              id
+              title
+              product {
+                title
+              }
+            }
+          }
+        }
+      }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+
+mutation CartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+  cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+    cart {
+      id
       lines(first: 10) {
         nodes {
           id
@@ -36,8 +92,8 @@ mutation CartCreate {
   }
 }
 
-mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
-  cartLinesAdd(cartId: $cartId, lines: $lines) {
+mutation CartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+  cartLinesUpdate(cartId: $cartId, lines: $lines) {
     cart {
       id
       lines(first: 10) {
@@ -69,6 +125,42 @@ mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
           amount
           currencyCode
         }
+      }
+    }
+  }
+}
+
+query CartRetrieve($cartId: ID!) {
+  cart(id: $cartId) {
+    id
+    lines(first: 10) {
+      nodes {
+        id
+        quantity
+        merchandise {
+          ... on ProductVariant {
+            id
+            title
+            image {
+              url
+            }
+            product {
+              title
+            }
+          }
+        }
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+        }
+      }
+    }
+    cost {
+      subtotalAmount {
+        amount
+        currencyCode
       }
     }
   }

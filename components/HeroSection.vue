@@ -1,18 +1,18 @@
 <template>
-  <div class="relative h-[70vh] overflow-hidden">
+  <div class="relative h-[70vh] w-screen overflow-hidden">
     <!-- Video Background -->
     <video
       autoplay
       loop
       muted
       playsinline
-      class="absolute top-0 left-0 w-full h-full object-cover"
+      class="absolute top-0 left-0 w-screen h-full object-cover object-[center_1%] scale-[1.5]"
     >
       <source src="~/public/videos/come-get-lost.mp4" type="video/mp4">
     </video>
 
     <!-- Overlay -->
-    <div class="absolute inset-0 bg-coastles-900/70 backdrop-filter backdrop-brightness-50"></div>
+    <div class="absolute inset-0 bg-coastles-900/20 backdrop-filter backdrop-brightness-20"></div>
 
     <!-- Content -->
     <div class="relative z-10 h-full flex items-center justify-center text-center">

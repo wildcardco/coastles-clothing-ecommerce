@@ -10,10 +10,14 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "nuxt": "^3.13.0",
-    "@nuxtjs/tailwindcss": "^6.11.4",
-    "nuxt-graphql-client": "^0.2.33",
     "@headlessui/vue": "^1.7.19",
-    "@heroicons/vue": "^2.1.1"
+    "@heroicons/vue": "^2.2.0",
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "@vueuse/core": "^12.3.0",
+    "nuxt": "^3.13.0",
+    "nuxt-graphql-client": "^0.2.33"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16"
   }
 }
