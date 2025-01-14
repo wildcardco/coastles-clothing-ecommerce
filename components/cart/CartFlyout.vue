@@ -32,18 +32,24 @@
             <p class="mt-1 text-sm text-gray-500">Start shopping to add items to your cart.</p>
           </div>
 
-          <ul v-else class="divide-y divide-gray-200">
-            <li v-for="item in cart.lines.nodes" :key="item.id" class="py-6">
-              <!-- Cart items will go here -->
-            </li>
-          </ul>
+          <div>
+            <ul v-if="cart?.lines?.nodes?.length" class="divide-y divide-gray-200">
+              <li v-for="item in cart.lines.nodes" :key="item.id" class="py-6">
+                <CartItem 
+                  :item="item"
+                  @update-quantity="updateQuantity"
+                  @remove="removeItem"
+                />
+              </li>
+            </ul>
+          </div>
         </div>
 
         <!-- Footer -->
         <div class="border-t border-gray-200 p-4">
           <div class="flex justify-between text-base font-medium text-gray-900">
             <p>Subtotal</p>
-            <p>{{ cart?.cost?.subtotalAmount?.amount }}</p>
+            <p>{{ formattedSubtotal }}</p>
           </div>
           <p class="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
           <div class="mt-6">
@@ -63,11 +69,39 @@
 <script setup>
 import { XMarkIcon, ShoppingBagIcon } from '@heroicons/vue/24/outline'
 import { useShopifyCart } from '#imports'
+import CartItem from './CartItem.vue'
+import { computed } from 'vue'
 
-const { cart, isCartOpen, toggleCart } = useShopifyCart()
+const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem } = useShopifyCart()
+
+const formattedSubtotal = computed(() => {
+  if (!cart.value?.lines?.nodes?.length || !cart.value?.cost?.subtotalAmount) {
+    return '$0.00'
+  }
+  return useFormatPrice(
+    cart.value.cost.subtotalAmount.amount,
+    cart.value.cost.subtotalAmount.currencyCode
+  )
+})
 
 const handleClose = () => {
   toggleCart(false)
+}
+
+const updateQuantity = async (lineId, quantity) => {
+  try {
+    await updateCartItem(lineId, quantity)
+  } catch (error) {
+    console.error('Failed to update quantity:', error)
+  }
+}
+
+const removeItem = async (lineId) => {
+  try {
+    await removeCartItem(lineId)
+  } catch (error) {
+    console.error('Failed to remove item:', error)
+  }
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex space-x-4">
+  <div class="flex py-4">
     <!-- Product Image -->
     <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
       <img
@@ -10,29 +10,32 @@
     </div>
 
     <!-- Product Details -->
-    <div class="flex flex-1 flex-col">
+    <div class="ml-4 flex flex-1 flex-col">
       <div>
-        <div class="flex justify-between text-base font-medium text-gray-900">
-          <h3>{{ item.merchandise.product.title }}</h3>
-          <p class="ml-4">{{ formattedPrice }}</p>
+        <div class="flex justify-between">
+          <h3 class="text-base font-medium text-gray-900">
+            {{ item.merchandise.product.title }}
+          </h3>
+          <p class="ml-4 text-base font-medium text-gray-900">
+            {{ formattedPrice }}
+          </p>
         </div>
         <p class="mt-1 text-sm text-gray-500">{{ item.merchandise.title }}</p>
       </div>
 
-      <!-- Quantity Controls -->
       <div class="flex flex-1 items-end justify-between text-sm">
         <div class="flex items-center space-x-2">
           <button 
             @click="updateQuantity(item.quantity - 1)"
-            class="text-gray-500 hover:text-gray-700"
+            class="text-gray-500 hover:text-gray-700 p-1"
             :disabled="item.quantity <= 1"
           >
             <MinusIcon class="h-4 w-4" />
           </button>
-          <span class="text-gray-500">Qty {{ item.quantity }}</span>
+          <span class="text-gray-500">{{ item.quantity }}</span>
           <button 
             @click="updateQuantity(item.quantity + 1)"
-            class="text-gray-500 hover:text-gray-700"
+            class="text-gray-500 hover:text-gray-700 p-1"
           >
             <PlusIcon class="h-4 w-4" />
           </button>
@@ -40,7 +43,7 @@
 
         <button
           type="button"
-          class="font-medium text-coastles-600 hover:text-coastles-500"
+          class="font-medium text-gray-500 hover:text-gray-700"
           @click="$emit('remove', item.id)"
         >
           Remove
