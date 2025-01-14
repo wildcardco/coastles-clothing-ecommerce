@@ -54,11 +54,14 @@
           <p class="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
           <div class="mt-6">
             <a
-              :href="cart?.checkoutUrl"
-              class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800"
-            >
-              Checkout
-            </a>
+      :href="cart?.checkoutUrl"
+      @click="handleCheckout"
+      class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+      :class="{ 'opacity-50 cursor-not-allowed': isRedirecting }"
+    >
+      <span v-if="isRedirecting">Redirecting to checkout...</span>
+      <span v-else>Checkout</span>
+    </a>
           </div>
         </div>
       </div>
@@ -72,6 +75,8 @@ import { useShopifyCart } from '#imports'
 import CartItem from './CartItem.vue'
 import { computed } from 'vue'
 
+const isRedirecting = ref(false)
+
 const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem } = useShopifyCart()
 
 const formattedSubtotal = computed(() => {
@@ -83,6 +88,11 @@ const formattedSubtotal = computed(() => {
     cart.value.cost.subtotalAmount.currencyCode
   )
 })
+
+const handleCheckout = () => {
+  isRedirecting.value = true
+  // The actual redirect happens automatically through the href
+}
 
 const handleClose = () => {
   toggleCart(false)
