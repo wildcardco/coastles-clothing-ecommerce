@@ -8,13 +8,13 @@ export const useProducts = () => {
           variantsFirst: 10
         }
       })
-      console.log('Latest Products Response:', {
-        data,
-        variants: data?.products?.edges?.[0]?.node?.variants?.edges
-      })
+      // console.log('Latest Products Response:', {
+      //   data,
+      //   variants: data?.products?.edges?.[0]?.node?.variants?.edges
+      // })
       return { data, pending, error }
     } catch (error) {
-      console.error('Error fetching latest products:', error)
+      // console.error('Error fetching latest products:', error)
       throw error
     }
   }
@@ -28,14 +28,14 @@ export const useProducts = () => {
           variantsFirst: 10
         }
       })
-      console.log('All Products Response:', {
-        data,
-        productCount: data?.products?.edges?.length,
-        firstProductVariants: data?.products?.edges?.[0]?.node?.variants?.edges
-      })
+      // console.log('All Products Response:', {
+      //   data,
+      //   productCount: data?.products?.edges?.length,
+      //   firstProductVariants: data?.products?.edges?.[0]?.node?.variants?.edges
+      // })
       return { data, pending, error }
     } catch (error) {
-      console.error('Error fetching all products:', error)
+      // console.error('Error fetching all products:', error)
       throw error
     }
   }
@@ -47,11 +47,11 @@ export const useProducts = () => {
         variables: { handle: handle.replace(/-/g, ' ') }
       })
       
-      console.log('Raw API Response:', data.value)
+      // console.log('Raw API Response:', data.value)
       
       return { data, pending, error }
     } catch (error) {
-      console.error('Error fetching product:', error)
+      // console.error('Error fetching product:', error)
       throw error
     }
   }

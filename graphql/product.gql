@@ -27,6 +27,7 @@ query GetProduct($handle: String!) {
               id
               title
               availableForSale
+              quantityAvailable
               selectedOptions {
                 name
                 value

@@ -57,7 +57,7 @@ const fetchProducts = async () => {
     
     const result = await response.json()
     data.value = result
-    console.log('Raw API Response:', result)
+    // console.log('Raw API Response:', result)
   } catch (e) {
     error.value = e.message
     console.error('Fetch error:', e)

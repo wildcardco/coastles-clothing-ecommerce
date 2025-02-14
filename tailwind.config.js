@@ -23,7 +23,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'], // Modern, sleek font
+        sans: ['DM Sans', 'sans-serif'], // Clean, modern font for body text
+        heading: ['Georgia', 'serif'], // Georgia for headings
       },
     }
   },
