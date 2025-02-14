@@ -42,7 +42,12 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: 'vercel-edge'
+    preset: 'vercel-edge',
+    routeRules: {
+      '/cart/c/**': {
+        proxy: 'https://checkout.coastles.store/**'
+      }
+    }
   },
 
   ssr: true
