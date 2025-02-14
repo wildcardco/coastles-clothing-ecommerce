@@ -3,6 +3,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   title: {
     type: String,
@@ -14,7 +16,7 @@ const props = defineProps({
   },
   image: {
     type: String,
-    default: '/images/og-image.jpg' // Add a default OG image
+    default: '/logo/logo.png' // Updated to use the Coastles logo
   },
   type: {
     type: String,
@@ -24,6 +26,15 @@ const props = defineProps({
     type: String,
     default: 'streetwear, premium clothing, California style, urban fashion, designer clothes'
   }
+})
+
+// Ensure the image URL is absolute
+const siteUrl = 'https://coastles.store'
+const absoluteImageUrl = computed(() => {
+  if (props.image.startsWith('http')) {
+    return props.image
+  }
+  return `${siteUrl}${props.image}`
 })
 
 useHead({
@@ -48,11 +59,19 @@ useHead({
     },
     {
       property: 'og:image',
-      content: props.image
+      content: absoluteImageUrl.value
+    },
+    {
+      property: 'og:image:alt',
+      content: 'Coastles Logo'
     },
     {
       property: 'og:type',
       content: props.type
+    },
+    {
+      property: 'og:site_name',
+      content: 'Coastles'
     },
     // Twitter Card
     {
@@ -69,13 +88,17 @@ useHead({
     },
     {
       name: 'twitter:image',
-      content: props.image
+      content: absoluteImageUrl.value
+    },
+    {
+      name: 'twitter:image:alt',
+      content: 'Coastles Logo'
     }
   ],
   link: [
     {
       rel: 'canonical',
-      href: `https://coastles.store${useRoute().path}`
+      href: `${siteUrl}${useRoute().path}`
     }
   ]
 })
