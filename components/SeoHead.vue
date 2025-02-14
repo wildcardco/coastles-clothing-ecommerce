@@ -16,7 +16,7 @@ const props = defineProps({
   },
   image: {
     type: String,
-    default: '/logo/logo.png' // Updated to use the Coastles logo
+    default: undefined
   },
   type: {
     type: String,
@@ -30,7 +30,12 @@ const props = defineProps({
 
 // Ensure the image URL is absolute
 const siteUrl = 'https://coastles.store'
+const defaultLogoUrl = `${siteUrl}/logo/logo.png`
+
 const absoluteImageUrl = computed(() => {
+  if (!props.image) {
+    return defaultLogoUrl
+  }
   if (props.image.startsWith('http')) {
     return props.image
   }
@@ -62,6 +67,14 @@ useHead({
       content: absoluteImageUrl.value
     },
     {
+      property: 'og:image:width',
+      content: '1200'
+    },
+    {
+      property: 'og:image:height',
+      content: '630'
+    },
+    {
       property: 'og:image:alt',
       content: 'Coastles Logo'
     },
@@ -72,6 +85,10 @@ useHead({
     {
       property: 'og:site_name',
       content: 'Coastles'
+    },
+    {
+      property: 'og:url',
+      content: `${siteUrl}${useRoute().path}`
     },
     // Twitter Card
     {
@@ -93,6 +110,14 @@ useHead({
     {
       name: 'twitter:image:alt',
       content: 'Coastles Logo'
+    },
+    {
+      name: 'twitter:domain',
+      content: 'coastles.store'
+    },
+    {
+      name: 'twitter:url',
+      content: `${siteUrl}${useRoute().path}`
     }
   ],
   link: [
