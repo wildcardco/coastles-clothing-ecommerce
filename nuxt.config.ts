@@ -26,7 +26,12 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Discover premium clothing at Coastles' }
+        { name: 'description', content: 'Discover premium clothing at Coastles' },
+        { name: 'robots', content: 'index, follow' },
+        { name: 'googlebot', content: 'index, follow' }
+      ],
+      link: [
+        { rel: 'canonical', href: 'https://coastles.store' }
       ]
     },
     pageTransition: {
