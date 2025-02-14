@@ -30,17 +30,28 @@ const props = defineProps({
 
 // Ensure the image URL is absolute
 const siteUrl = 'https://coastles.store'
-const defaultLogoUrl = `${siteUrl}/logo/logo.png`
+// Use the full URL to the logo
+const defaultLogoUrl = 'https://coastles.store/logo/logo.png'
 
 const absoluteImageUrl = computed(() => {
+  // For debugging
+  console.log('Image prop:', props.image)
+  
   if (!props.image) {
+    console.log('Using default logo:', defaultLogoUrl)
     return defaultLogoUrl
   }
   if (props.image.startsWith('http')) {
+    console.log('Using absolute URL:', props.image)
     return props.image
   }
-  return `${siteUrl}${props.image}`
+  const fullUrl = `${siteUrl}${props.image}`
+  console.log('Using constructed URL:', fullUrl)
+  return fullUrl
 })
+
+// For debugging
+console.log('Final OG Image URL:', absoluteImageUrl.value)
 
 useHead({
   title: `${props.title} | Coastles - Premium Clothing`,
@@ -64,6 +75,10 @@ useHead({
     },
     {
       property: 'og:image',
+      content: absoluteImageUrl.value
+    },
+    {
+      property: 'og:image:secure_url',
       content: absoluteImageUrl.value
     },
     {

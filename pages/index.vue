@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <main>
+    <SeoHead
+      title="Coastles - Premium Streetwear"
+      description="Discover our collection of premium streetwear designed for those who dare to stand out. Exclusive California-inspired clothing featuring high-quality materials and unique designs."
+      image="/logo/logo.png"
+    />
     <HeroSection />
     
     <!-- Latest Products Section -->
@@ -22,7 +27,7 @@
         />
       </div>
     </section>
-  </div>
+  </main>
 </template>
 
 <script setup>
