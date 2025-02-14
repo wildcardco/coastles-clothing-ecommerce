@@ -1,6 +1,12 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
+    <SeoHead
+      :title="product?.title"
+      :description="stripHtml(product?.descriptionHtml) || `Shop ${product?.title} - Premium streetwear by Coastles. High-quality materials, unique designs, and California-inspired style.`"
+      :image="productMedia?.[0]?.image?.url"
+      type="product"
+      :keywords="`${product?.title}, Coastles clothing, premium streetwear, California style, ${product?.tags?.join(', ')}`"
+    />
 
     <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2">
       <!-- Test Image
@@ -221,6 +227,12 @@ watch(selectedVariant, (newVariant) => {
   //   newQuantity: quantity.value
   // });
 }, { immediate: true });
+
+// Add this helper function
+const stripHtml = (html) => {
+  if (!html) return ''
+  return html.replace(/<[^>]*>/g, '')
+}
 </script>
 
 <style scoped>

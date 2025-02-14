@@ -1,19 +1,45 @@
 <template>
-  <div class="group">
-    <NuxtLink :to="`/products/${product.handle}`">
+  <article class="group product-card" itemscope itemtype="http://schema.org/Product">
+    <NuxtLink :to="`/products/${product.handle}`" :title="`View ${product.title} details`">
       <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-200">
         <img 
           :src="product.images.nodes[0].url" 
-          :alt="product.title" 
+          :alt="product.title"
+          :title="product.title"
           class="h-full w-full object-cover object-center"
+          itemprop="image"
         >
       </div>
-      <h3 class="mt-4 text-sm font-heading text-gray-700">{{ product.title }}</h3>
-      <p class="mt-1 text-lg font-medium">
-        {{ formattedPrice }}
-      </p>
+      <div class="mt-4 space-y-2">
+        <h3 
+          class="text-sm font-heading text-gray-700"
+          itemprop="name"
+        >
+          {{ product.title }}
+        </h3>
+        <p 
+          class="text-xs text-gray-500"
+          itemprop="description"
+        >
+          {{ product.description || `Premium ${product.title} - Coastles Clothing Collection` }}
+        </p>
+        <div class="flex justify-between items-center">
+          <p 
+            class="text-lg font-medium"
+            itemprop="offers" 
+            itemscope 
+            itemtype="http://schema.org/Offer"
+          >
+            <meta itemprop="priceCurrency" :content="product.priceRange.minVariantPrice.currencyCode">
+            <span itemprop="price">{{ formattedPrice }}</span>
+          </p>
+          <span class="text-sm text-coastles-600">
+            {{ product.availableForSale ? 'In Stock' : 'Out of Stock' }}
+          </span>
+        </div>
+      </div>
     </NuxtLink>
-  </div>
+  </article>
 </template>
 
 <script setup>
@@ -31,3 +57,13 @@ const formattedPrice = computed(() => {
   )
 })
 </script>
+
+<style scoped>
+.product-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+}
+</style>

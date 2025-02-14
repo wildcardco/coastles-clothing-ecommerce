@@ -1,1 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /cart
+Disallow: /checkouts
+Disallow: /carts
+Disallow: /orders
 
+# Prevent access to myshopify domain
+Host: coastles.store
+Sitemap: https://coastles.store/sitemap.xml
+
+# Block myshopify domain
+User-agent: *
+Disallow: /
+Host: 4d7f1d-86.myshopify.com
