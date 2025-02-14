@@ -17,12 +17,21 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  availableQuantity: {
+    type: Number,
+    default: 0
+  }
 });
 
 const isLoading = ref(false);
 const error = ref(null);
-const addToCartButtonText = computed(() => {
+const isOutOfStock = computed(() => {
+  return props.quantity > props.availableQuantity || props.availableQuantity <= 0;
+});
+
+const buttonText = computed(() => {
   if (error.value) return 'Failed to add';
+  if (isOutOfStock.value) return 'Out of Stock';
   return isLoading.value ? 'Adding...' : 'Add to Cart';
 });
 
@@ -32,13 +41,13 @@ const handleAddToCart = async () => {
   error.value = null;
   try {
     isLoading.value = true;
-    console.log('Adding variant to cart:', {
-      variantId: props.variantId,
-      quantity: props.quantity
-    });
+    // console.log('Adding variant to cart:', {
+    //   variantId: props.variantId,
+    //   quantity: props.quantity
+    // });
     await addToCart(props.variantId, props.quantity);
   } catch (err) {
-    console.error('Failed to add item to cart:', err);
+    // console.error('Failed to add item to cart:', err);
     error.value = err.message;
     // Reset error after 3 seconds
     setTimeout(() => {
@@ -60,14 +69,14 @@ watch(cart, (val) => {
     type="button"
     class="rounded-lg flex font-bold text-white text-center min-w-[150px] p-2.5 gap-4 items-center justify-center focus:outline-none"
     :class="{
-      'bg-gray-800 hover:bg-gray-700': !disabled && !error,
-      'bg-gray-400 cursor-not-allowed': disabled,
+      'bg-gray-800 hover:bg-gray-700': !disabled && !error && !isOutOfStock,
+      'bg-gray-400 cursor-not-allowed': disabled || isOutOfStock,
       'bg-red-600': error
     }"
-    :disabled="disabled || isLoading"
+    :disabled="disabled || isLoading || isOutOfStock"
     @click="handleAddToCart"
   >
-    <span>{{ addToCartButtonText }}</span>
+    <span>{{ buttonText }}</span>
     <div 
       v-if="isLoading" 
       class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"

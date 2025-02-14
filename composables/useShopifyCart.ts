@@ -83,7 +83,7 @@ export const useShopifyCart = () => {
       })
 
       const { data } = await response.json()
-      console.log('Cart create response:', data)
+      // console.log('Cart create response:', data)
       
       if (data?.cartCreate?.cart?.id) {
         const newCart = data.cartCreate.cart
@@ -106,10 +106,10 @@ export const useShopifyCart = () => {
   const fetchCart = async () => {
     try {
       const cartId = localStorage.getItem('cartId')
-      console.log('Fetching cart with ID:', cartId)
+      // console.log('Fetching cart with ID:', cartId)
       
       if (!cartId) {
-        console.log('No cart ID in localStorage, creating new cart')
+        // console.log('No cart ID in localStorage, creating new cart')
         return await createCart()
       }
 
@@ -134,13 +134,13 @@ export const useShopifyCart = () => {
       })
 
       const { data } = await response.json()
-      console.log('Cart retrieve response:', data)
+      // console.log('Cart retrieve response:', data)
 
       if (data?.cart) {
         cart.value = data.cart
         return data.cart
       } else {
-        console.log('Cart not found, creating new cart')
+        // console.log('Cart not found, creating new cart')
         localStorage.removeItem('cartId')
         return await createCart()
       }
@@ -156,7 +156,7 @@ export const useShopifyCart = () => {
       isUpdatingCart.value = true
       
       if (!cart.value?.id) {
-        console.log('No cart exists, creating new cart')
+        // console.log('No cart exists, creating new cart')
         const newCart = await createCart()
         if (!newCart?.id) {
           throw new Error('Failed to create cart')
@@ -164,11 +164,11 @@ export const useShopifyCart = () => {
         cart.value = newCart
       }
 
-      console.log('Adding to cart:', {
-        cartId: cart.value.id,
-        merchandiseId,
-        quantity
-      })
+      // console.log('Adding to cart:', {
+      //   cartId: cart.value.id,
+      //   merchandiseId,
+      //   quantity
+      // })
 
       const response = await fetch('https://4d7f1d-86.myshopify.com/api/2024-01/graphql.json', {
         method: 'POST',
@@ -201,7 +201,7 @@ export const useShopifyCart = () => {
       })
 
       const { data } = await response.json()
-      console.log('Cart lines add response:', data)
+      // console.log('Cart lines add response:', data)
 
       if (data?.cartLinesAdd?.cart) {
         cart.value = data.cartLinesAdd.cart
@@ -214,7 +214,7 @@ export const useShopifyCart = () => {
 
       return data?.cartLinesAdd?.cart
     } catch (error) {
-      console.error('Error adding to cart:', error)
+      // console.error('Error adding to cart:', error)
       throw error
     } finally {
       isUpdatingCart.value = false
@@ -263,7 +263,7 @@ export const useShopifyCart = () => {
         throw new Error(data.cartLinesUpdate.userErrors[0].message)
       }
     } catch (error) {
-      console.error('Error updating cart item:', error)
+      // console.error('Error updating cart item:', error)
       throw error
     } finally {
       isUpdatingCart.value = false

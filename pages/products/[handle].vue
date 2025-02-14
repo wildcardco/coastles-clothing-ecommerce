@@ -20,7 +20,7 @@
 
       <!-- Product Info -->
       <div class="lg:col-start-2 lg:col-span-1">
-        <h1 class="text-4xl italic font-medium text-gray-900">
+        <h1 class="text-4xl font-heading italic font-medium text-gray-900">
           {{ product?.title }}
         </h1>
         
@@ -28,6 +28,17 @@
         <div class="mt-4">
           <p class="text-2xl font-bold text-red-600">
             {{ formattedPrice }} USD
+          </p>
+        </div>
+
+        <!-- Add this after the price display -->
+        <div class="mt-2">
+          <p class="text-sm" :class="{
+            'text-green-600': selectedVariant?.quantityAvailable > 5,
+            'text-orange-600': selectedVariant?.quantityAvailable > 0 && selectedVariant?.quantityAvailable <= 5,
+            'text-red-600': !selectedVariant?.quantityAvailable
+          }">
+            {{ stockStatus }}
           </p>
         </div>
 
@@ -59,23 +70,32 @@
 
         <!-- Quantity Selector -->
         <div class="mt-8">
-          <label for="quantity" class="text-sm font-medium text-gray-900">Quantity</label>
+          <label for="quantity" class="text-sm font-medium text-gray-900">
+            Quantity
+            <span v-if="selectedVariant?.quantityAvailable" class="text-sm text-gray-500">
+              (Max: {{ selectedVariant.quantityAvailable }})
+            </span>
+          </label>
           <div class="mt-2 flex rounded-md shadow-sm">
             <button 
               @click="quantity > 1 && quantity--"
               class="relative -mr-px inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+              :disabled="!selectedVariant?.quantityAvailable"
             >
               −
             </button>
             <input
               type="number"
               v-model="quantity"
+              :max="selectedVariant?.quantityAvailable || 1"
               min="1"
               class="block w-20 border-gray-300 text-center focus:ring-coastles-600 focus:border-coastles-600 sm:text-sm"
+              :disabled="!selectedVariant?.quantityAvailable"
             />
             <button 
-              @click="quantity++"
+              @click="quantity < (selectedVariant?.quantityAvailable || 1) && quantity++"
               class="relative -ml-px inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+              :disabled="!selectedVariant?.quantityAvailable || quantity >= selectedVariant.quantityAvailable"
             >
               +
             </button>
@@ -88,6 +108,7 @@
             :variant-id="selectedVariant?.id"
             :disabled="!selectedVariant || !selectedVariant.availableForSale"
             :quantity="quantity"
+            :available-quantity="selectedVariant?.quantityAvailable || 0"
             class="w-full"
           />
         </div>
@@ -108,25 +129,25 @@ const { getProduct } = useProducts()
 
 // Fetch product data
 const { data, pending, error } = await getProduct(`title:${route.params.handle.replace(/-/g, ' ')}`)
-console.log('Raw API response:', data.value)
+// console.log('Raw API response:', data.value)
 
 const product = computed(() => {
   const prod = data.value?.products?.edges?.[0]?.node
-  console.log('Computed product:', prod)
+  // console.log('Computed product:', prod)
   return prod || null
 })
 
 const productMedia = computed(() => {
   const media = product.value?.media?.nodes
-  console.log('Computed media:', media)
+  // console.log('Computed media:', media)
   return media || []
 })
 
 // Get variants directly from product
 const variants = computed(() => product.value?.variants?.edges || [])
 
-console.log('Product Data:', product.value)
-console.log('Variants:', variants.value)
+// console.log('Product Data:', product.value)
+// console.log('Variants:', variants.value)
 
 // Selected options and quantity
 const selectedOptions = ref({ Size: '' })
@@ -136,7 +157,7 @@ const quantity = ref(1)
 watch(variants, (newVariants) => {
   if (newVariants?.[0]?.node?.selectedOptions?.[0]?.value) {
     selectedOptions.value.Size = newVariants[0].node.selectedOptions[0].value
-    console.log('Setting initial size:', newVariants[0].node.selectedOptions[0].value)
+    // console.log('Setting initial size:', newVariants[0].node.selectedOptions[0].value)
   }
 }, { immediate: true })
 
@@ -147,7 +168,7 @@ const selectedVariant = computed(() => {
   const found = variants.value.find(({ node }) => 
     node.selectedOptions[0].value === selectedOptions.value.Size
   )?.node
-  console.log('Selected variant:', found)
+  // console.log('Selected variant:', found)
   return found
 })
 
@@ -170,12 +191,36 @@ const formattedPrice = computed(() => {
 
 // Debug watches
 watch(product, (newProduct) => {
-  console.log('Product changed:', newProduct)
+  // console.log('Product changed:', newProduct)
 }, { immediate: true })
 
 watch(productMedia, (newMedia) => {
-  console.log('Media changed:', newMedia)
+  // console.log('Media changed:', newMedia)
 }, { immediate: true })
+
+// Add this new computed property
+const stockStatus = computed(() => {
+  if (!selectedVariant.value) return 'Select a variant';
+  if (!selectedVariant.value.availableForSale) return 'Out of stock';
+  if (selectedVariant.value.quantityAvailable <= 0) return 'Out of stock';
+  if (selectedVariant.value.quantityAvailable <= 5) return `Low stock: ${selectedVariant.value.quantityAvailable} left`;
+  return `In stock: ${selectedVariant.value.quantityAvailable} available`;
+})
+
+// Update the quantity watcher to respect stock limits
+watch(selectedVariant, (newVariant) => {
+  quantity.value = 1;
+  
+  if (newVariant?.quantityAvailable && quantity.value > newVariant.quantityAvailable) {
+    quantity.value = newVariant.quantityAvailable;
+  }
+  
+  // console.log('Variant changed:', {
+  //   variant: newVariant?.title,
+  //   quantityAvailable: newVariant?.quantityAvailable,
+  //   newQuantity: quantity.value
+  // });
+}, { immediate: true });
 </script>
 
 <style scoped>
