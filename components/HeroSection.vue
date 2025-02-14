@@ -20,23 +20,14 @@
         <h1 class="text-5xl font-heading font-bold tracking-tight text-white sm:text-6xl md:text-7xl">
           <span class="block font-heading text-white font-light tracking-[0.2em] text-3xl sm:text-4xl md:text-5xl mt-2">COAST LESS, CREATE MORE</span>
         </h1>
-        <div class="mt-6 space-y-4">
-          <p class="max-w-md mx-auto text-white text-lg sm:text-xl md:text-2xl md:max-w-3xl">
-            Discover our collection of premium streetwear designed for those who dare to stand out.
-          </p>
-          <p class="max-w-md mx-auto text-white text-base sm:text-lg md:text-xl md:max-w-3xl">
-            Exclusive California-inspired streetwear featuring high-quality materials and unique designs.
-          </p>
-          <p class="max-w-md mx-auto text-white text-base sm:text-lg md:text-xl md:max-w-3xl">
-            Join the movement of creators, adventurers, and trendsetters.
-          </p>
-        </div>
+        <p class="mt-6 max-w-md mx-auto text-white text-lg sm:text-xl md:mt-8 md:text-2xl md:max-w-3xl">
+          Discover our collection of premium streetwear designed for those who dare to stand out.
+        </p>
         <div class="mt-8 max-w-md mx-auto sm:flex sm:justify-center md:mt-10">
           <div class="rounded-none shadow">
             <NuxtLink
               to="/products"
               class="w-full flex items-center justify-center px-8 py-4 border-2 border-white text-base font-medium text-white bg-transparent hover:bg-white hover:text-coastles-900 transition-all duration-300 md:text-lg md:px-12"
-              title="Shop Coastles Premium Streetwear Collection"
             >
               SHOP NOW
             </NuxtLink>
