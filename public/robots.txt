@@ -4,10 +4,21 @@ Disallow: /cart
 Disallow: /checkouts
 Disallow: /carts
 Disallow: /orders
+Disallow: /account
 
-# Prevent access to myshopify domain
+# Main domain configuration
 Host: coastles.store
 Sitemap: https://coastles.store/sitemap.xml
+
+# Checkout subdomain configuration
+Host: checkout.coastles.store
+Allow: /
+Disallow: /cart/add
+Disallow: /cart/change
+Disallow: /cart/clear
+Disallow: /cart/update
+Disallow: /account/login
+Disallow: /account/register
 
 # Block myshopify domain
 User-agent: *

@@ -54,14 +54,14 @@
           <p class="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
           <div class="mt-6">
             <a
-      :href="cart?.checkoutUrl"
-      @click="handleCheckout"
-      class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-      :class="{ 'opacity-50 cursor-not-allowed': isRedirecting }"
-    >
-      <span v-if="isRedirecting">Redirecting to checkout...</span>
-      <span v-else>Checkout</span>
-    </a>
+              :href="checkoutUrl"
+              @click.prevent="handleCheckout"
+              class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              :class="{ 'opacity-50 cursor-not-allowed': isRedirecting }"
+            >
+              <span v-if="isRedirecting">Redirecting to checkout...</span>
+              <span v-else>Checkout</span>
+            </a>
           </div>
         </div>
       </div>
@@ -77,7 +77,7 @@ import { computed } from 'vue'
 
 const isRedirecting = ref(false)
 
-const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem } = useShopifyCart()
+const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem, fetchCart } = useShopifyCart()
 
 const formattedSubtotal = computed(() => {
   if (!cart.value?.lines?.nodes?.length || !cart.value?.cost?.subtotalAmount) {
@@ -89,10 +89,34 @@ const formattedSubtotal = computed(() => {
   )
 })
 
-const handleCheckout = () => {
-  isRedirecting.value = true
-  // The actual redirect happens automatically through the href
-}
+const checkoutUrl = computed(() => {
+  if (!cart.value?.checkoutUrl) return null;
+  
+  try {
+    const url = new URL(cart.value.checkoutUrl);
+    const checkoutToken = url.pathname.split('/').pop();
+    
+    // Use the checkout subdomain
+    return `https://checkout.coastles.store/checkout/${checkoutToken}${url.search}`;
+  } catch (error) {
+    console.error('Error formatting checkout URL:', error);
+    return cart.value.checkoutUrl;
+  }
+});
+
+const handleCheckout = async () => {
+  if (!checkoutUrl.value) return;
+  
+  isRedirecting.value = true;
+  console.log('Redirecting to checkout:', checkoutUrl.value);
+  
+  try {
+    window.location.href = checkoutUrl.value;
+  } catch (error) {
+    console.error('Error during checkout redirect:', error);
+    window.location.href = cart.value.checkoutUrl;
+  }
+};
 
 const handleClose = () => {
   toggleCart(false)
