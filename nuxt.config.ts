@@ -49,43 +49,101 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'vercel-edge',
     routeRules: {
-      '/cart/c/**': {
-        proxy: 'https://checkout.coastles.store/**'
+      // Checkout routes
+      '/cart/**': {
+        proxy: {
+          to: 'https://checkout.coastles.store/**',
+          headers: {
+            'x-debug-proxy': 'cart-route'
+          }
+        }
       },
       '/checkouts/**': {
-        proxy: 'https://checkout.coastles.store/**'
+        proxy: {
+          to: 'https://checkout.coastles.store/**',
+          headers: {
+            'x-debug-proxy': 'checkouts-route'
+          }
+        }
+      },
+
+      // Authentication routes with detailed debugging
+      '/authentication/6511172010/**': {
+        proxy: {
+          to: 'https://checkout.coastles.store/authentication/6511172010/**',
+          headers: {
+            'x-debug-proxy': 'auth-specific-route'
+          }
+        }
       },
       '/authentication/**': {
-        proxy: 'https://checkout.coastles.store/authentication/**'
+        proxy: {
+          to: 'https://checkout.coastles.store/authentication/**',
+          headers: {
+            'x-debug-proxy': 'auth-general-route'
+          }
+        }
       },
       '/account/**': {
-        proxy: 'https://checkout.coastles.store/account/**'
+        proxy: {
+          to: 'https://checkout.coastles.store/account/**',
+          headers: {
+            'x-debug-proxy': 'account-route'
+          }
+        }
       },
       '/challenge/**': {
-        proxy: 'https://checkout.coastles.store/challenge/**'
-      },
-      '/multipass/**': {
-        proxy: 'https://checkout.coastles.store/multipass/**'
+        proxy: {
+          to: 'https://checkout.coastles.store/challenge/**',
+          headers: {
+            'x-debug-proxy': 'challenge-route'
+          }
+        }
       },
       '/oauth/**': {
-        proxy: 'https://checkout.coastles.store/oauth/**'
-      },
-      '/auth/**': {
-        proxy: 'https://checkout.coastles.store/auth/**'
+        proxy: {
+          to: 'https://checkout.coastles.store/oauth/**',
+          headers: {
+            'x-debug-proxy': 'oauth-route'
+          }
+        }
       },
       '/login/**': {
-        proxy: 'https://checkout.coastles.store/login/**'
+        proxy: {
+          to: 'https://checkout.coastles.store/login/**',
+          headers: {
+            'x-debug-proxy': 'login-route'
+          }
+        }
       },
-      '/register/**': {
-        proxy: 'https://checkout.coastles.store/register/**'
+      '/callback': {
+        proxy: {
+          to: 'https://checkout.coastles.store/callback',
+          headers: {
+            'x-debug-proxy': 'callback-route'
+          }
+        }
       },
+
+      // Root security headers
       '/': {
         headers: {
           'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
         }
       }
-    }
+    },
+    debug: true
   },
 
-  ssr: true
+  ssr: true,
+  
+  // Add debug logging
+  hooks: {
+    'nitro:init': () => {
+      console.log('Nitro initialized')
+    },
+    'close': () => {
+      console.log('Nitro closing')
+    }
+  }
 })
