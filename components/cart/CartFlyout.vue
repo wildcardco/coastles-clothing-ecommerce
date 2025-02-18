@@ -77,7 +77,7 @@ import { computed } from 'vue'
 
 const isRedirecting = ref(false)
 
-const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem } = useShopifyCart()
+const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem, fetchCart } = useShopifyCart()
 
 const formattedSubtotal = computed(() => {
   if (!cart.value?.lines?.nodes?.length || !cart.value?.cost?.subtotalAmount) {
@@ -94,18 +94,13 @@ const checkoutUrl = computed(() => {
   
   try {
     const url = new URL(cart.value.checkoutUrl);
+    const checkoutToken = url.pathname.split('/').pop();
     
-    // If we're in development, use the original Shopify URL
-    if (process.dev) {
-      return cart.value.checkoutUrl;
-    }
-    
-    // In production, transform to our custom domain
-    const path = url.pathname + url.search;
-    return `https://checkout.coastles.store${path}`;
+    // Use the checkout subdomain
+    return `https://checkout.coastles.store/checkout/${checkoutToken}${url.search}`;
   } catch (error) {
     console.error('Error formatting checkout URL:', error);
-    return cart.value.checkoutUrl; // Fallback to original URL
+    return cart.value.checkoutUrl;
   }
 });
 
@@ -113,26 +108,13 @@ const handleCheckout = async () => {
   if (!checkoutUrl.value) return;
   
   isRedirecting.value = true;
+  console.log('Redirecting to checkout:', checkoutUrl.value);
   
   try {
-    // For development environment, use direct redirect
-    if (process.dev) {
-      window.location.href = checkoutUrl.value;
-      return;
-    }
-    
-    // For production, handle the redirect through our custom domain
     window.location.href = checkoutUrl.value;
-    
   } catch (error) {
     console.error('Error during checkout redirect:', error);
-    // Fallback to direct Shopify URL if there's an error
     window.location.href = cart.value.checkoutUrl;
-  } finally {
-    // Reset redirecting state after a delay
-    setTimeout(() => {
-      isRedirecting.value = false;
-    }, 5000);
   }
 };
 
