@@ -54,14 +54,14 @@
           <p class="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
           <div class="mt-6">
             <a
-      :href="cart?.checkoutUrl"
-      @click="handleCheckout"
-      class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-      :class="{ 'opacity-50 cursor-not-allowed': isRedirecting }"
-    >
-      <span v-if="isRedirecting">Redirecting to checkout...</span>
-      <span v-else>Checkout</span>
-    </a>
+              :href="checkoutUrl"
+              @click.prevent="handleCheckout"
+              class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              :class="{ 'opacity-50 cursor-not-allowed': isRedirecting }"
+            >
+              <span v-if="isRedirecting">Redirecting to checkout...</span>
+              <span v-else>Checkout</span>
+            </a>
           </div>
         </div>
       </div>
@@ -89,10 +89,52 @@ const formattedSubtotal = computed(() => {
   )
 })
 
-const handleCheckout = () => {
-  isRedirecting.value = true
-  // The actual redirect happens automatically through the href
-}
+const checkoutUrl = computed(() => {
+  if (!cart.value?.checkoutUrl) return null;
+  
+  try {
+    const url = new URL(cart.value.checkoutUrl);
+    
+    // If we're in development, use the original Shopify URL
+    if (process.dev) {
+      return cart.value.checkoutUrl;
+    }
+    
+    // In production, transform to our custom domain
+    const path = url.pathname + url.search;
+    return `https://checkout.coastles.store${path}`;
+  } catch (error) {
+    console.error('Error formatting checkout URL:', error);
+    return cart.value.checkoutUrl; // Fallback to original URL
+  }
+});
+
+const handleCheckout = async () => {
+  if (!checkoutUrl.value) return;
+  
+  isRedirecting.value = true;
+  
+  try {
+    // For development environment, use direct redirect
+    if (process.dev) {
+      window.location.href = checkoutUrl.value;
+      return;
+    }
+    
+    // For production, handle the redirect through our custom domain
+    window.location.href = checkoutUrl.value;
+    
+  } catch (error) {
+    console.error('Error during checkout redirect:', error);
+    // Fallback to direct Shopify URL if there's an error
+    window.location.href = cart.value.checkoutUrl;
+  } finally {
+    // Reset redirecting state after a delay
+    setTimeout(() => {
+      isRedirecting.value = false;
+    }, 5000);
+  }
+};
 
 const handleClose = () => {
   toggleCart(false)

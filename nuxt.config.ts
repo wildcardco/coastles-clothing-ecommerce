@@ -51,19 +51,43 @@ export default defineNuxtConfig({
     routeRules: {
       // Cart and checkout handling
       '/cart': {
-        redirect: 'https://checkout.coastles.store/cart'
+        redirect: {
+          to: 'https://checkout.coastles.store/cart',
+          statusCode: 302
+        }
+      },
+      '/cart/**': {
+        redirect: {
+          to: 'https://checkout.coastles.store/cart/:splat',
+          statusCode: 302
+        }
       },
       '/checkout': {
-        redirect: 'https://checkout.coastles.store/checkout'
+        redirect: {
+          to: 'https://checkout.coastles.store/checkout',
+          statusCode: 302
+        }
+      },
+      '/checkouts/**': {
+        redirect: {
+          to: 'https://checkout.coastles.store/checkouts/:splat',
+          statusCode: 302
+        }
       },
       '/account': {
-        redirect: 'https://checkout.coastles.store/account'
+        redirect: {
+          to: 'https://checkout.coastles.store/account',
+          statusCode: 302
+        }
       },
 
       // Root security headers
       '/': {
         headers: {
-          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+          'Access-Control-Allow-Origin': 'https://checkout.coastles.store',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
         }
       }
     }
