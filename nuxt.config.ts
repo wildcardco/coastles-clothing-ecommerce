@@ -51,6 +51,38 @@ export default defineNuxtConfig({
     routeRules: {
       '/cart/c/**': {
         proxy: 'https://checkout.coastles.store/**'
+      },
+      '/checkouts/**': {
+        proxy: 'https://checkout.coastles.store/**'
+      },
+      '/authentication/**': {
+        proxy: 'https://checkout.coastles.store/authentication/**'
+      },
+      '/account/**': {
+        proxy: 'https://checkout.coastles.store/account/**'
+      },
+      '/challenge/**': {
+        proxy: 'https://checkout.coastles.store/challenge/**'
+      },
+      '/multipass/**': {
+        proxy: 'https://checkout.coastles.store/multipass/**'
+      },
+      '/oauth/**': {
+        proxy: 'https://checkout.coastles.store/oauth/**'
+      },
+      '/auth/**': {
+        proxy: 'https://checkout.coastles.store/auth/**'
+      },
+      '/login/**': {
+        proxy: 'https://checkout.coastles.store/login/**'
+      },
+      '/register/**': {
+        proxy: 'https://checkout.coastles.store/register/**'
+      },
+      '/': {
+        headers: {
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+        }
       }
     }
   },
