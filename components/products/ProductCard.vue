@@ -33,9 +33,6 @@
             <meta itemprop="priceCurrency" :content="product.priceRange.minVariantPrice.currencyCode">
             <span itemprop="price">{{ formattedPrice }}</span>
           </p>
-          <span class="text-sm text-coastles-600">
-            {{ product.availableForSale ? 'In Stock' : 'Out of Stock' }}
-          </span>
         </div>
       </div>
     </NuxtLink>

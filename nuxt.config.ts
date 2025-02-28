@@ -16,7 +16,11 @@ export default defineNuxtConfig({
             },
           }
         }
-      }
+      },
+      shopifyDomain: 'https://4d7f1d-86.myshopify.com',
+      checkoutDomain: process.env.NODE_ENV === 'development' 
+        ? 'https://4d7f1d-86.myshopify.com'
+        : 'https://checkout.coastles.store'
     }
   },
 
@@ -49,22 +53,31 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'vercel-edge',
     routeRules: {
-      // Checkout subdomain handling
-      'https://checkout.coastles.store/**': {
-        proxy: 'https://4d7f1d-86.myshopify.com/**'
+      // Direct Shopify checkout handling - don't intercept these URLs
+      '/cart/c/**': { 
+        proxy: 'https://4d7f1d-86.myshopify.com/cart/**'
       },
-      '/checkout/**': {
-        redirect: {
-          to: 'https://checkout.coastles.store/checkout/:splat',
-          statusCode: 301
-        }
-      },
+      
+      // Only redirect standard cart URLs, not the special checkout URLs
       '/cart': {
         redirect: {
           to: 'https://checkout.coastles.store/cart',
           statusCode: 301
         }
       },
+      
+      // Checkout subdomain handling
+      'https://checkout.coastles.store/**': {
+        proxy: 'https://4d7f1d-86.myshopify.com/**'
+      },
+      
+      '/checkout/**': {
+        redirect: {
+          to: 'https://checkout.coastles.store/checkout/:splat',
+          statusCode: 301
+        }
+      },
+      
       '/': {
         headers: {
           'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
@@ -89,7 +102,3 @@ export default defineNuxtConfig({
     }
   }
 })
-
-const checkoutDomain = process.env.NODE_ENV === 'development' 
-  ? 'https://4d7f1d-86.myshopify.com'
-  : 'https://checkout.coastles.store'
