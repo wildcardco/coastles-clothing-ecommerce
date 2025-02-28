@@ -73,11 +73,11 @@
 import { XMarkIcon, ShoppingBagIcon } from '@heroicons/vue/24/outline'
 import { useShopifyCart } from '#imports'
 import CartItem from './CartItem.vue'
-import { computed } from 'vue'
-
-const isRedirecting = ref(false)
+import { computed, ref } from 'vue'
 
 const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem, fetchCart } = useShopifyCart()
+const runtimeConfig = useRuntimeConfig()
+const isRedirecting = ref(false)
 
 const formattedSubtotal = computed(() => {
   if (!cart.value?.lines?.nodes?.length || !cart.value?.cost?.subtotalAmount) {
@@ -93,11 +93,15 @@ const checkoutUrl = computed(() => {
   if (!cart.value?.checkoutUrl) return null;
   
   try {
-    const url = new URL(cart.value.checkoutUrl);
-    const checkoutToken = url.pathname.split('/').pop();
+    // Always use the direct Shopify URL
+    const originalUrl = cart.value.checkoutUrl;
+    console.log('Original checkout URL:', originalUrl);
     
-    // Use the checkout subdomain
-    return `https://checkout.coastles.store/checkout/${checkoutToken}${url.search}`;
+    // Always transform to direct Shopify URL
+    return originalUrl.replace(
+      'https://coastles.store/cart/c/',
+      'https://4d7f1d-86.myshopify.com/cart/c/'
+    );
   } catch (error) {
     console.error('Error formatting checkout URL:', error);
     return cart.value.checkoutUrl;
@@ -105,15 +109,20 @@ const checkoutUrl = computed(() => {
 });
 
 const handleCheckout = async () => {
-  if (!checkoutUrl.value) return;
+  if (!checkoutUrl.value) {
+    console.error('No checkout URL available');
+    return;
+  }
   
   isRedirecting.value = true;
   console.log('Redirecting to checkout:', checkoutUrl.value);
   
   try {
+    // Force redirect to the Shopify checkout URL
     window.location.href = checkoutUrl.value;
   } catch (error) {
     console.error('Error during checkout redirect:', error);
+    // Fallback to original URL if there's an error
     window.location.href = cart.value.checkoutUrl;
   }
 };
