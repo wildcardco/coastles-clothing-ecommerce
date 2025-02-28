@@ -52,6 +52,15 @@
             <p>{{ formattedSubtotal }}</p>
           </div>
           <p class="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
+          
+          <!-- Debug URL display -->
+          <div v-if="cart?.checkoutUrl" class="mt-2 p-2 bg-gray-100 rounded text-xs break-all">
+            <strong>Original URL:</strong> {{ cart.checkoutUrl }}
+          </div>
+          <div v-if="checkoutUrl" class="mt-2 p-2 bg-gray-100 rounded text-xs break-all">
+            <strong>Checkout URL:</strong> {{ checkoutUrl }}
+          </div>
+          
           <div class="mt-6">
             <a
               :href="checkoutUrl"
@@ -90,27 +99,18 @@ const formattedSubtotal = computed(() => {
 })
 
 const checkoutUrl = computed(() => {
-  if (!cart.value?.checkoutUrl) return null;
+  if (!cart.value?.checkoutUrl) {
+    console.error('No checkout URL in cart data:', cart.value);
+    return null;
+  }
   
   try {
-    // Extract the checkout token from the URL
-    const originalUrl = cart.value.checkoutUrl;
-    console.log('Original checkout URL:', originalUrl);
-    
-    // Extract the cart token using a more flexible regex pattern
-    const cartMatch = originalUrl.match(/\/cart\/c\/([^?]+)/);
-    if (!cartMatch || !cartMatch[1]) {
-      console.error('Could not extract cart token from URL');
-      return originalUrl;
-    }
-    
-    const cartToken = cartMatch[1];
-    const queryParams = originalUrl.includes('?') ? originalUrl.split('?')[1] : '';
-    
-    // Construct URL with checkout.coastles.store domain
-    return `https://checkout.coastles.store/cart/c/${cartToken}${queryParams ? '?' + queryParams : ''}`;
+    // Just use the original checkout URL from Shopify directly
+    const url = cart.value.checkoutUrl;
+    console.log('Original checkout URL:', url);
+    return url;
   } catch (error) {
-    console.error('Error formatting checkout URL:', error);
+    console.error('Error with checkout URL:', error);
     return cart.value.checkoutUrl;
   }
 });
