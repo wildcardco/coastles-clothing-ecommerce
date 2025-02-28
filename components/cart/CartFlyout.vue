@@ -102,6 +102,7 @@ const checkoutUrl = computed(() => {
       'https://coastles.store/cart/c/',
       'https://4d7f1d-86.myshopify.com/cart/c/'
     );
+    
   } catch (error) {
     console.error('Error formatting checkout URL:', error);
     return cart.value.checkoutUrl;
