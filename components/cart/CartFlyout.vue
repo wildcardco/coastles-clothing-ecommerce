@@ -93,16 +93,22 @@ const checkoutUrl = computed(() => {
   if (!cart.value?.checkoutUrl) return null;
   
   try {
-    // Always use the direct Shopify URL
+    // Extract the checkout token from the URL
     const originalUrl = cart.value.checkoutUrl;
     console.log('Original checkout URL:', originalUrl);
     
-    // Always transform to direct Shopify URL
-    return originalUrl.replace(
-      'https://coastles.store/cart/c/',
-      'https://4d7f1d-86.myshopify.com/cart/c/'
-    );
+    // Extract the cart token using a more flexible regex pattern
+    const cartMatch = originalUrl.match(/\/cart\/c\/([^?]+)/);
+    if (!cartMatch || !cartMatch[1]) {
+      console.error('Could not extract cart token from URL');
+      return originalUrl;
+    }
     
+    const cartToken = cartMatch[1];
+    const queryParams = originalUrl.includes('?') ? originalUrl.split('?')[1] : '';
+    
+    // Construct URL with checkout.coastles.store domain
+    return `https://checkout.coastles.store/cart/c/${cartToken}${queryParams ? '?' + queryParams : ''}`;
   } catch (error) {
     console.error('Error formatting checkout URL:', error);
     return cart.value.checkoutUrl;

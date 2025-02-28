@@ -1,0 +1,24 @@
+{
+  "redirects": [
+    {
+      "source": "checkout.coastles.store/cart/:path*",
+      "destination": "https://4d7f1d-86.myshopify.com/cart/:path*",
+      "permanent": true
+    },
+    {
+      "source": "checkout.coastles.store/checkout/:path*",
+      "destination": "https://4d7f1d-86.myshopify.com/checkout/:path*",
+      "permanent": true
+    },
+    {
+      "source": "checkout.coastles.store/account/:path*",
+      "destination": "https://4d7f1d-86.myshopify.com/account/:path*",
+      "permanent": true
+    },
+    {
+      "source": "checkout.coastles.store/:path*",
+      "destination": "https://4d7f1d-86.myshopify.com/:path*",
+      "permanent": true
+    }
+  ]
+} 
