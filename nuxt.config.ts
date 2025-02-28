@@ -16,11 +16,7 @@ export default defineNuxtConfig({
             },
           }
         }
-      },
-      shopifyDomain: 'https://4d7f1d-86.myshopify.com',
-      checkoutDomain: process.env.NODE_ENV === 'development' 
-        ? 'https://4d7f1d-86.myshopify.com'
-        : 'https://checkout.coastles.store'
+      }
     }
   },
 
@@ -53,52 +49,11 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'vercel-edge',
     routeRules: {
-      // Direct Shopify checkout handling - don't intercept these URLs
-      '/cart/c/**': { 
-        proxy: 'https://4d7f1d-86.myshopify.com/cart/**'
-      },
-      
-      // Only redirect standard cart URLs, not the special checkout URLs
-      '/cart': {
-        redirect: {
-          to: 'https://checkout.coastles.store/cart',
-          statusCode: 301
-        }
-      },
-      
-      // Checkout subdomain handling
-      'https://checkout.coastles.store/**': {
-        proxy: 'https://4d7f1d-86.myshopify.com/**'
-      },
-      
-      '/checkout/**': {
-        redirect: {
-          to: 'https://checkout.coastles.store/checkout/:splat',
-          statusCode: 301
-        }
-      },
-      
-      '/': {
-        headers: {
-          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-          'Access-Control-Allow-Origin': ['https://4d7f1d-86.myshopify.com', 'https://checkout.coastles.store'].join(', '),
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Shopify-Storefront-Access-Token',
-          'Access-Control-Allow-Credentials': 'true'
-        }
+      '/cart/c/**': {
+        proxy: 'https://checkout.coastles.store/**'
       }
     }
   },
 
-  ssr: true,
-  
-  // Add debug logging
-  hooks: {
-    'nitro:init': () => {
-      console.log('Nitro initialized')
-    },
-    'close': () => {
-      console.log('Nitro closing')
-    }
-  }
+  ssr: true
 })

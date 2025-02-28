@@ -52,25 +52,16 @@
             <p>{{ formattedSubtotal }}</p>
           </div>
           <p class="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
-          
-          <!-- Debug URL display -->
-          <div v-if="cart?.checkoutUrl" class="mt-2 p-2 bg-gray-100 rounded text-xs break-all">
-            <strong>Original URL:</strong> {{ cart.checkoutUrl }}
-          </div>
-          <div v-if="checkoutUrl" class="mt-2 p-2 bg-gray-100 rounded text-xs break-all">
-            <strong>Checkout URL:</strong> {{ checkoutUrl }}
-          </div>
-          
           <div class="mt-6">
             <a
-              :href="checkoutUrl"
-              @click.prevent="handleCheckout"
-              class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-              :class="{ 'opacity-50 cursor-not-allowed': isRedirecting }"
-            >
-              <span v-if="isRedirecting">Redirecting to checkout...</span>
-              <span v-else>Checkout</span>
-            </a>
+      :href="cart?.checkoutUrl"
+      @click="handleCheckout"
+      class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+      :class="{ 'opacity-50 cursor-not-allowed': isRedirecting }"
+    >
+      <span v-if="isRedirecting">Redirecting to checkout...</span>
+      <span v-else>Checkout</span>
+    </a>
           </div>
         </div>
       </div>
@@ -82,11 +73,11 @@
 import { XMarkIcon, ShoppingBagIcon } from '@heroicons/vue/24/outline'
 import { useShopifyCart } from '#imports'
 import CartItem from './CartItem.vue'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
-const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem, fetchCart } = useShopifyCart()
-const runtimeConfig = useRuntimeConfig()
 const isRedirecting = ref(false)
+
+const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem } = useShopifyCart()
 
 const formattedSubtotal = computed(() => {
   if (!cart.value?.lines?.nodes?.length || !cart.value?.cost?.subtotalAmount) {
@@ -98,41 +89,10 @@ const formattedSubtotal = computed(() => {
   )
 })
 
-const checkoutUrl = computed(() => {
-  if (!cart.value?.checkoutUrl) {
-    console.error('No checkout URL in cart data:', cart.value);
-    return null;
-  }
-  
-  try {
-    // Just use the original checkout URL from Shopify directly
-    const url = cart.value.checkoutUrl;
-    console.log('Original checkout URL:', url);
-    return url;
-  } catch (error) {
-    console.error('Error with checkout URL:', error);
-    return cart.value.checkoutUrl;
-  }
-});
-
-const handleCheckout = async () => {
-  if (!checkoutUrl.value) {
-    console.error('No checkout URL available');
-    return;
-  }
-  
-  isRedirecting.value = true;
-  console.log('Redirecting to checkout:', checkoutUrl.value);
-  
-  try {
-    // Force redirect to the Shopify checkout URL
-    window.location.href = checkoutUrl.value;
-  } catch (error) {
-    console.error('Error during checkout redirect:', error);
-    // Fallback to original URL if there's an error
-    window.location.href = cart.value.checkoutUrl;
-  }
-};
+const handleCheckout = () => {
+  isRedirecting.value = true
+  // The actual redirect happens automatically through the href
+}
 
 const handleClose = () => {
   toggleCart(false)
