@@ -316,6 +316,48 @@ export const useShopifyCart = () => {
     }
   }
 
+  const goToCheckout = () => {
+    if (!cart.value) {
+      console.error('No cart available');
+      return;
+    }
+    
+    try {
+      // Debug the cart object
+      console.log('Cart object for debugging:', cart.value);
+      
+      // First try to use the checkoutUrl from the cart if available
+      if (cart.value.checkoutUrl) {
+        console.log('Using checkout URL from API:', cart.value.checkoutUrl);
+        window.location.href = cart.value.checkoutUrl;
+        return cart.value.checkoutUrl;
+      }
+      
+      // Fallback: Extract the cart ID and create a checkout URL
+      const cartId = cart.value.id;
+      if (!cartId) {
+        console.error('No cart ID available');
+        return;
+      }
+      
+      // Extract just the cart token from the ID
+      const cartToken = cartId.split('/').pop();
+      console.log('Cart token:', cartToken);
+      
+      // Create a web URL using the Shopify domain
+      // Use the web URL format that worked in the GitHub version
+      const webUrl = `https://4d7f1d-86.myshopify.com/cart/${cartToken}:${cartToken}`;
+      console.log('Web URL:', webUrl);
+      
+      // Navigate to the checkout URL
+      window.location.href = webUrl;
+      return webUrl;
+    } catch (error) {
+      console.error('Error redirecting to checkout:', error);
+      return null;
+    }
+  };
+
   // Initialize cart on mount
   onMounted(() => {
     fetchCart()
@@ -329,6 +371,7 @@ export const useShopifyCart = () => {
     addToCart,
     fetchCart,
     updateCartItem,
-    removeCartItem
+    removeCartItem,
+    goToCheckout
   }
 }
