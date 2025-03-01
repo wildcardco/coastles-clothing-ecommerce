@@ -40,9 +40,9 @@
         <!-- Add this after the price display -->
         <div class="mt-2">
           <p class="text-sm" :class="{
-            'text-green-600 font-bold': selectedVariant?.quantityAvailable >= 25,
-            'text-orange-600 font-bold': selectedVariant?.quantityAvailable >= 10 && selectedVariant?.quantityAvailable < 25,
-            'text-red-600 font-bold': selectedVariant?.quantityAvailable < 10 || !selectedVariant?.quantityAvailable
+            'text-green-600': selectedVariant?.quantityAvailable > 5,
+            'text-orange-600': selectedVariant?.quantityAvailable > 0 && selectedVariant?.quantityAvailable <= 5,
+            'text-red-600': !selectedVariant?.quantityAvailable
           }">
             {{ stockStatus }}
           </p>
@@ -209,9 +209,8 @@ const stockStatus = computed(() => {
   if (!selectedVariant.value) return 'Select a variant';
   if (!selectedVariant.value.availableForSale) return 'Out of stock';
   if (selectedVariant.value.quantityAvailable <= 0) return 'Out of stock';
-  if (selectedVariant.value.quantityAvailable < 10) return 'Low stock';
-  if (selectedVariant.value.quantityAvailable < 25) return 'Limited stock';
-  return 'Several in stock';
+  if (selectedVariant.value.quantityAvailable <= 5) return `Low stock: ${selectedVariant.value.quantityAvailable} left`;
+  return `In stock: ${selectedVariant.value.quantityAvailable} available`;
 })
 
 // Update the quantity watcher to respect stock limits
