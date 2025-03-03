@@ -26,15 +26,15 @@
 
         <!-- Cart Content -->
         <div class="flex-1 overflow-y-auto p-4">
-          <div v-if="!cart?.lines?.nodes?.length" class="text-center py-8">
+          <div v-if="!cartHasItems" class="text-center py-8">
             <ShoppingBagIcon class="mx-auto h-12 w-12 text-gray-400" />
             <h3 class="mt-2 text-sm font-medium text-gray-900">Cart is empty</h3>
             <p class="mt-1 text-sm text-gray-500">Start shopping to add items to your cart.</p>
           </div>
 
           <div>
-            <ul v-if="cart?.lines?.nodes?.length" class="divide-y divide-gray-200">
-              <li v-for="item in cart.lines.nodes" :key="item.id" class="py-6">
+            <ul v-if="cartHasItems" class="divide-y divide-gray-200">
+              <li v-for="item in cartItems" :key="item.id" class="py-6">
                 <CartItem 
                   :item="item"
                   @update-quantity="updateQuantity"
@@ -57,7 +57,7 @@
               @click="handleCheckout"
               class="w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
               :class="{ 'opacity-50 cursor-not-allowed': isRedirecting }"
-              :disabled="!cart?.lines?.nodes?.length || isRedirecting"
+              :disabled="!cartHasItems || isRedirecting"
             >
               <span v-if="isRedirecting">Redirecting to checkout...</span>
               <span v-else>Checkout</span>
@@ -78,14 +78,27 @@ import { computed, ref } from 'vue'
 const { cart, isCartOpen, toggleCart, removeCartItem, updateCartItem, goToCheckout } = useShopifyCart()
 const isRedirecting = ref(false)
 
+const cartItems = computed(() => {
+  if (!cart.value?.lines?.nodes) return []
+  return cart.value.lines.nodes
+})
+
+const cartHasItems = computed(() => {
+  return cartItems.value.length > 0
+})
+
 const formattedSubtotal = computed(() => {
-  if (!cart.value?.lines?.nodes?.length || !cart.value?.cost?.subtotalAmount) {
+  if (!cart.value?.cost?.subtotalAmount) {
     return '$0.00'
   }
-  return useFormatPrice(
-    cart.value.cost.subtotalAmount.amount,
-    cart.value.cost.subtotalAmount.currencyCode
-  )
+  
+  const amount = cart.value.cost.subtotalAmount.amount
+  const currencyCode = cart.value.cost.subtotalAmount.currencyCode
+  
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currencyCode || 'USD'
+  }).format(parseFloat(amount))
 })
 
 const handleCheckout = () => {
