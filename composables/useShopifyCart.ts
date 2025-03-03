@@ -4,6 +4,9 @@ export const useShopifyCart = () => {
   const cart = useState<any>('shopifyCart', () => null)
   const isCartOpen = useState<boolean>('isCartOpen', () => false)
   const isUpdatingCart = useState<boolean>('isUpdatingCart', () => false)
+  const config = useRuntimeConfig().public
+  const shopifyDomain = config.shopifyDomain as string
+  const shopifyStorefrontToken = config.shopifyStorefrontToken as string
 
   const toggleCart = (state?: boolean) => {
     isCartOpen.value = state ?? !isCartOpen.value
@@ -18,13 +21,17 @@ export const useShopifyCart = () => {
   const cartFragment = `
     id
     totalQuantity
+    checkoutUrl
     cost {
       subtotalAmount {
         amount
         currencyCode
       }
+      totalAmount {
+        amount
+        currencyCode
+      }
     }
-    checkoutUrl
     lines(first: 10) {
       nodes {
         id
@@ -59,11 +66,11 @@ export const useShopifyCart = () => {
 
   const createCart = async () => {
     try {
-      const response = await fetch('https://4d7f1d-86.myshopify.com/api/2024-01/graphql.json', {
+      const response = await fetch(`https://${shopifyDomain}/api/2024-01/graphql.json`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': '4e299f747bbee0bda43e552b6706e128'
+          'X-Shopify-Storefront-Access-Token': shopifyStorefrontToken
         },
         body: JSON.stringify({
           query: `
@@ -83,7 +90,6 @@ export const useShopifyCart = () => {
       })
 
       const { data } = await response.json()
-      // console.log('Cart create response:', data)
       
       if (data?.cartCreate?.cart?.id) {
         const newCart = data.cartCreate.cart
@@ -106,18 +112,16 @@ export const useShopifyCart = () => {
   const fetchCart = async () => {
     try {
       const cartId = localStorage.getItem('cartId')
-      // console.log('Fetching cart with ID:', cartId)
       
       if (!cartId) {
-        // console.log('No cart ID in localStorage, creating new cart')
         return await createCart()
       }
 
-      const response = await fetch('https://4d7f1d-86.myshopify.com/api/2024-01/graphql.json', {
+      const response = await fetch(`https://${shopifyDomain}/api/2024-01/graphql.json`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': '4e299f747bbee0bda43e552b6706e128'
+          'X-Shopify-Storefront-Access-Token': shopifyStorefrontToken
         },
         body: JSON.stringify({
           query: `
@@ -134,13 +138,11 @@ export const useShopifyCart = () => {
       })
 
       const { data } = await response.json()
-      // console.log('Cart retrieve response:', data)
 
       if (data?.cart) {
         cart.value = data.cart
         return data.cart
       } else {
-        // console.log('Cart not found, creating new cart')
         localStorage.removeItem('cartId')
         return await createCart()
       }
@@ -156,7 +158,6 @@ export const useShopifyCart = () => {
       isUpdatingCart.value = true
       
       if (!cart.value?.id) {
-        // console.log('No cart exists, creating new cart')
         const newCart = await createCart()
         if (!newCart?.id) {
           throw new Error('Failed to create cart')
@@ -164,17 +165,11 @@ export const useShopifyCart = () => {
         cart.value = newCart
       }
 
-      // console.log('Adding to cart:', {
-      //   cartId: cart.value.id,
-      //   merchandiseId,
-      //   quantity
-      // })
-
-      const response = await fetch('https://4d7f1d-86.myshopify.com/api/2024-01/graphql.json', {
+      const response = await fetch(`https://${shopifyDomain}/api/2024-01/graphql.json`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': '4e299f747bbee0bda43e552b6706e128'
+          'X-Shopify-Storefront-Access-Token': shopifyStorefrontToken
         },
         body: JSON.stringify({
           query: `
@@ -201,7 +196,6 @@ export const useShopifyCart = () => {
       })
 
       const { data } = await response.json()
-      // console.log('Cart lines add response:', data)
 
       if (data?.cartLinesAdd?.cart) {
         cart.value = data.cartLinesAdd.cart
@@ -214,7 +208,7 @@ export const useShopifyCart = () => {
 
       return data?.cartLinesAdd?.cart
     } catch (error) {
-      // console.error('Error adding to cart:', error)
+      console.error('Error adding to cart:', error)
       throw error
     } finally {
       isUpdatingCart.value = false
@@ -225,11 +219,11 @@ export const useShopifyCart = () => {
     try {
       isUpdatingCart.value = true
       
-      const response = await fetch('https://4d7f1d-86.myshopify.com/api/2024-01/graphql.json', {
+      const response = await fetch(`https://${shopifyDomain}/api/2024-01/graphql.json`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': '4e299f747bbee0bda43e552b6706e128'
+          'X-Shopify-Storefront-Access-Token': shopifyStorefrontToken
         },
         body: JSON.stringify({
           query: `
@@ -263,7 +257,7 @@ export const useShopifyCart = () => {
         throw new Error(data.cartLinesUpdate.userErrors[0].message)
       }
     } catch (error) {
-      // console.error('Error updating cart item:', error)
+      console.error('Error updating cart item:', error)
       throw error
     } finally {
       isUpdatingCart.value = false
@@ -274,11 +268,11 @@ export const useShopifyCart = () => {
     try {
       isUpdatingCart.value = true
       
-      const response = await fetch('https://4d7f1d-86.myshopify.com/api/2024-01/graphql.json', {
+      const response = await fetch(`https://${shopifyDomain}/api/2024-01/graphql.json`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': '4e299f747bbee0bda43e552b6706e128'
+          'X-Shopify-Storefront-Access-Token': shopifyStorefrontToken
         },
         body: JSON.stringify({
           query: `
@@ -317,41 +311,21 @@ export const useShopifyCart = () => {
   }
 
   const goToCheckout = () => {
-    if (!cart.value) {
-      console.error('No cart available');
-      return;
-    }
-    
     try {
-      // Debug the cart object
-      console.log('Cart object for debugging:', cart.value);
-      
-      // First try to use the checkoutUrl from the cart if available
+      if (!cart.value || !cart.value.id) {
+        console.error('No cart available for checkout');
+        return null;
+      }
+
+      // Use the checkoutUrl directly from the cart
       if (cart.value.checkoutUrl) {
-        console.log('Using checkout URL from API:', cart.value.checkoutUrl);
+        console.log('Redirecting to Shopify checkout:', cart.value.checkoutUrl);
         window.location.href = cart.value.checkoutUrl;
         return cart.value.checkoutUrl;
       }
-      
-      // Fallback: Extract the cart ID and create a checkout URL
-      const cartId = cart.value.id;
-      if (!cartId) {
-        console.error('No cart ID available');
-        return;
-      }
-      
-      // Extract just the cart token from the ID
-      const cartToken = cartId.split('/').pop();
-      console.log('Cart token:', cartToken);
-      
-      // Create a web URL using the Shopify domain
-      // Use the web URL format that worked in the GitHub version
-      const webUrl = `https://4d7f1d-86.myshopify.com/cart/${cartToken}:${cartToken}`;
-      console.log('Web URL:', webUrl);
-      
-      // Navigate to the checkout URL
-      window.location.href = webUrl;
-      return webUrl;
+
+      console.error('No checkout URL available');
+      return null;
     } catch (error) {
       console.error('Error redirecting to checkout:', error);
       return null;

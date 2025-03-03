@@ -16,7 +16,9 @@ export default defineNuxtConfig({
             },
           }
         }
-      }
+      },
+      shopifyDomain: process.env.SHOPIFY_DOMAIN || '4d7f1d-86.myshopify.com',
+      shopifyStorefrontToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || '4e299f747bbee0bda43e552b6706e128'
     }
   },
 
@@ -49,8 +51,15 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'vercel-edge',
     routeRules: {
-      '/cart/c/**': {
-        proxy: 'https://checkout.coastles.store/**'
+      // No proxy or redirect rules for cart/checkout
+      // We'll handle these with client-side redirects
+
+      // Root security headers
+      '/': {
+        headers: {
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+          'Cache-Control': 'public, max-age=0, must-revalidate'
+        }
       }
     }
   },
